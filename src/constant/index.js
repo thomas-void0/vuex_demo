@@ -1,0 +1,1 @@
+export const ADD_STUDENT_INFO = "add_student_info";
