@@ -32,6 +32,19 @@
     <span>getters辅助函数:</span>
     <h4 v-for="(item,index) in getMore30" :key="-(index+2)">年龄:{{item.age}}---姓名:{{item.name}}</h4>
     <h4>个数:{{getMore30Len}}</h4>
+    <hr>
+    <span>A模块</span>
+    <h3>普通的访问方法：{{$store.state.A.name}}</h3>
+    <h3>映射的访问方法：{{Aname}}</h3>
+    <h3>{{$store.getters.firstName}}</h3>
+    <h3>{{$store.getters.secondName}}</h3>
+    <hr>
+    <button @click="aUpateCount(10000)">A模块的异步请求</button>
+    <hr>
+    <span>B模块</span>
+    <h3>Store中的count：{{count}}</h3>
+    <h3>B模块中的count: {{$store.state.B.count}}</h3>
+    <button @click="bUpateCount">B模块改变count</button>
   </div>
 </template>
 
@@ -92,7 +105,9 @@ export default {
         "changeCount"
     ]),
     ...mapActions({
-       changeCount2:"changeCount2"
+       changeCount2:"changeCount2",
+       aUpateCount:"aUpateCount", // A模块的actions
+       bUpateCount:"B/aUpateCount" //B模块的actions，改为bUpdateCount  因为定义了命名空间的关系，我们必须指定路径才能正确的访问
     })
 
   },
@@ -101,10 +116,12 @@ export default {
       return this.$store.state.students
     },
     ...mapState({ //mapState写法1
-      count:"count"
+      count:"count",
+
+      Aname:state=>state.A.name //映射A模块中的数据 
     }),
     ...mapState([ //mapState 写法2
-      "count2"
+      "count2",
     ]),
 
     /*mapGetters*/ 

@@ -4,6 +4,58 @@ import {ADD_STUDENT_INFO} from '../constant';
 
 Vue.use(Vuex);
 
+const moduleA = {
+    state: {
+        name:"我是A模块"
+    },
+    mutations: {
+        addNum(state){
+            console.log("我是模块A中的方法")
+            state.count += 100000;
+        },
+    },
+    actions: {
+        //需要注意的是模块a的getters可以接收个参数，第二个参数是模块A中的其他getters函数，第三个是store中的状态
+        aUpateCount(context,payload){
+            console.log("context==>",context) //拿到的一样是全局的store
+            setTimeout(()=>{
+                context.commit("addNum",payload); //1s后全局的count增加payload
+            },1000)
+        }
+    },
+    getters: {
+        firstName(state){
+            return `+++ ${state.name} +++`
+        },
+        secondName(state,getters,rootState){
+            //需要注意的是模块a的getters可以接收三个参数，第二个参数是模块A中的其他getters函数，第三个是store中的状态
+            return `${state.name} ---其他getters函数： ${getters.firstName} --- store实例的数据：${rootState.count}`
+        }
+    },
+
+}
+
+const moduleB = {
+    namespaced: true,
+    state: {
+        count:0
+    },
+    mutations: {
+        addNum(state){
+            console.log("我是模块A中的方法")
+            state.count += 100000;
+        },
+    },
+    actions: {
+        aUpateCount(context,payload){
+            console.log("context==>",context) //拿到的一样是模块B自己的store
+            setTimeout(()=>{
+                context.commit("addNum",payload); //1s后模块B自己的count增加payload
+            },1000)
+        }
+    },
+}
+
 export default new Vuex.Store({
     state:{
         count:1000,
@@ -19,6 +71,7 @@ export default new Vuex.Store({
         //mutations中函数的三种使用方式：
         //1，有传参，传参是一个基本类型数据
         addNum(state,payload){
+            console.log("我是Store中的方法")
             state.count += payload;
         },
         //2，没有传参
@@ -57,7 +110,8 @@ export default new Vuex.Store({
         }
     },
     modules: {
-        
+        A:moduleA, //引入模块A
+        B:moduleB //引入模块B
     }
 })
 
